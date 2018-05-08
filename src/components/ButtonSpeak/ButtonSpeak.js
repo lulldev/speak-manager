@@ -73,7 +73,6 @@ class ButtonSpeak extends React.Component {
             interimTranscripts += transcript
           }
         }
-        console.log(finalTranscripts);
         this.props.setVoiceAnswer(finalTranscripts)
         this.setState({ status: 'ready' })
       }.bind(this)
@@ -87,7 +86,6 @@ class ButtonSpeak extends React.Component {
   }
 
   onErrorConverting(event) {
-    console.log(event.error)
     speechRecognizer.stop()
     this.setState({
       status: 'ready',

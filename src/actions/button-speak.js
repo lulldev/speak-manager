@@ -18,3 +18,10 @@ export const setVoiceAnswer = voice => {
     voice
   }
 }
+
+export const getCurrentClientMessage = state => {
+  return {
+    type: 'GET_CURRENT_CLIENT_MESSAGE',
+    voice: state.voice
+  }
+}

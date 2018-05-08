@@ -1,14 +1,29 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import {store} from '../store'
 
-const SpeackManager = () => (
-  <div>I'm manager</div>
-)
+class SpeakManager extends React.Component {
+  constructor(props) {
+    super(props);
 
-//Todo.propTypes = {
-//  onClick: PropTypes.func.isRequired,
-//  completed: PropTypes.bool.isRequired,
-//  text: PropTypes.string.isRequired
-//}
+    this.state = {
+      clientMessage: '',
+    };
 
-export default SpeackManager
+    store.subscribe(() => {
+      this.setState({
+        clientMessage: store.getState().buttonSpeak.voiceAnswer
+      });
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        Hello! I'm manager
+        your message is: { this.state.clientMessage }
+      </div>
+    );
+  }
+}
+
+export default SpeakManager

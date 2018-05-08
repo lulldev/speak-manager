@@ -7,7 +7,8 @@ import { connect } from 'react-redux'
 import {
   setStateButtonSpeak,
   setCompleteSayWord,
-  setVoiceAnswer
+  setVoiceAnswer,
+  getCurrentClientMessage
 } from '../actions/button-speak'
 
 
@@ -17,11 +18,12 @@ class App extends React.Component {
     this.props.setVoiceAnswer('')
     this.props.setCompleteSayWord(false)
     this.props.setStateButtonSpeak(false)
+    this.props.getCurrentClientMessage('')
   }
   render() {
     return (
       <div>
-        <SpeakManager />
+        <SpeakManager/>
         <ButtonSpeak
           setStateButtonSpeak={ this.props.setStateButtonSpeak }
           setCompleteSayWord={ this.props.setCompleteSayWord }
@@ -32,15 +34,15 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-  }
-}
+const mapStateToProps = state => ({
+  clientMessage: state.voice
+})
 
 const mapDispatchToProps = (dispatch) => ({
   setStateButtonSpeak: bindActionCreators(setStateButtonSpeak, dispatch),
   setCompleteSayWord: bindActionCreators(setCompleteSayWord, dispatch),
-  setVoiceAnswer: bindActionCreators(setVoiceAnswer, dispatch)
+  setVoiceAnswer: bindActionCreators(setVoiceAnswer, dispatch),
+  getCurrentClientMessage: bindActionCreators(getCurrentClientMessage, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)
