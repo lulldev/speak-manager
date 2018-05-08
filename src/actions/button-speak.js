@@ -1,10 +1,3 @@
-export const setCompleteSayWord = isCompleteSay => {
-  return {
-    type: 'SET_COMPLETE_SAY_WORD',
-    isCompleteSay
-  }
-}
-
 export const setStateButtonSpeak = state => {
   return {
     type: 'SET_STATE_BUTTON_SPEAK',
@@ -19,9 +12,9 @@ export const setVoiceAnswer = voice => {
   }
 }
 
-export const getCurrentClientMessage = state => {
+export const blockButtonSpeak = isBlock => {
   return {
-    type: 'GET_CURRENT_CLIENT_MESSAGE',
-    voice: state.voice
+    type: 'BLOCK_BUTTON_SPEAK',
+    isBlock
   }
 }

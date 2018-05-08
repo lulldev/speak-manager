@@ -1,7 +1,7 @@
 const initialState = {
   isPressedButtonSpeak: false,
-  isCompleteSayWord: false,
   voiceAnswer: '',
+  isBlock: false,
   error: ''
 }
 
@@ -14,16 +14,16 @@ const buttonSpeak = (state = initialState, action) => {
         isPressedButtonSpeak: action.state
       }
 
-    case 'SET_COMPLETE_SAY_WORD':
-      return {
-        ...state,
-        isCompleteSayWord: action.isCompleteSay
-      }
-
     case 'SET_VOICE_ANSWER':
       return {
         ...state,
         voiceAnswer: action.voice,
+      }
+
+    case 'BLOCK_BUTTON_SPEAK':
+      return {
+        ...state,
+        isBlock: action.isBlock,
       }
 
     case 'SET_INITIAL_STATE':

@@ -3,14 +3,14 @@ import { Button } from 'reactstrap'
 import './ButtonSpeak.css'
 import PropTypes from 'prop-types'
 import { FormGroup } from 'reactstrap';
+import { store } from "../../store";
 
 export const speechRecognizer = new window.webkitSpeechRecognition()
 
 class ButtonSpeak extends React.Component {
   static propsTypes = {
     setStateButtonSpeak: PropTypes.func.isRequired,
-    setCompleteSayWord: PropTypes.func.isRequired,
-    setVoiceAnswer: PropTypes.func.isRequired
+    setVoiceAnswer: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -18,7 +18,16 @@ class ButtonSpeak extends React.Component {
     this.state = {
       status: 'ready',
       hint: '',
+      isBlock: false
     }
+
+    console.log(store.getState().buttonSpeak);
+    store.subscribe(() => {
+      this.setState({
+        isBlock: store.getState().buttonSpeak.isBlock
+      });
+    });
+
     this.onPressed = this.onPressed.bind(this)
     this.startConverting = this.startConverting.bind(this)
     this.onErrorConverting = this.onErrorConverting.bind(this)
@@ -45,6 +54,7 @@ class ButtonSpeak extends React.Component {
       })
       this.startConverting()
     } else {
+      this.props.setStateButtonSpeak(false)
       speechRecognizer.stop()
       this.setState({
         status: 'ready',
@@ -54,7 +64,6 @@ class ButtonSpeak extends React.Component {
 
   startConverting() {
     if ('webkitSpeechRecognition' in window) {
-      this.setState({ status: 'process' })
       speechRecognizer.continuous = false
       speechRecognizer.interimResults = true
       speechRecognizer.lang = 'ru-RU'
@@ -130,7 +139,9 @@ class ButtonSpeak extends React.Component {
           <Button
             onClick={ this.onPressed }
             className='button-speak'
-            color='success'>
+            color='success'
+            disabled={this.state.isBlock}
+          >
             { this.showBtnStatusText() }
           </Button>
           <div className='help-text'>{this.state.hint}</div>
