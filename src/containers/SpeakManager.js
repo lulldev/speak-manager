@@ -33,7 +33,7 @@ class SpeakManager extends React.Component {
   }
 
   componentDidMount() {
-    const msg = 'Привет, я ваш менеджер. Что бы вы хотели?'
+    const msg = 'Привет, скажи мне что нибудь и я это повторю!'
     this.say(msg)
   }
 
@@ -51,8 +51,7 @@ class SpeakManager extends React.Component {
   }
 
   replyHandler() {
-    // todo: response to client
-    this.say('ха ха ха')
+    this.say(this.state.clientMessage)
   }
 
   render() {

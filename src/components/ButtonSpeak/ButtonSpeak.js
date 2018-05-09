@@ -18,7 +18,8 @@ class ButtonSpeak extends React.Component {
     this.state = {
       status: 'ready',
       hint: '',
-      isBlock: false
+      isBlock: false,
+      isRecognizing: false,
     }
 
     console.log(store.getState().buttonSpeak);
@@ -64,12 +65,20 @@ class ButtonSpeak extends React.Component {
 
   startConverting() {
     if ('webkitSpeechRecognition' in window) {
-      speechRecognizer.continuous = false
-      speechRecognizer.interimResults = true
-      speechRecognizer.lang = 'ru-RU'
-      speechRecognizer.start()
+      let finalTranscripts = ''
 
-      var finalTranscripts = ''
+      speechRecognizer.onstart = function () {
+        this.setState({isRecognizing: true})
+      }.bind(this)
+
+      speechRecognizer.onend = function () {
+        this.setState({isRecognizing: false})
+      }.bind(this)
+
+      speechRecognizer.onerror = function (event) {
+        this.setState({isRecognizing: false})
+        this.onErrorConverting()
+      }.bind(this)
 
       speechRecognizer.onresult = function(event) {
         var interimTranscripts = ''
@@ -85,7 +94,15 @@ class ButtonSpeak extends React.Component {
         this.props.setVoiceAnswer(finalTranscripts)
         this.setState({ status: 'ready' })
       }.bind(this)
-      speechRecognizer.onerror = this.onErrorConverting
+
+      speechRecognizer.continuous = false
+      speechRecognizer.interimResults = true
+      speechRecognizer.lang = 'ru-RU'
+
+      if (!this.state.isRecognizing) {
+        speechRecognizer.start()
+      }
+
     } else {
       this.setState({ 
         status: 'ready',
