@@ -33,7 +33,7 @@ class SpeakManager extends React.Component {
   }
 
   componentDidMount() {
-    const msg = 'Привет, скажи мне что нибудь и я это повторю!'
+    const msg = 'Здравствуйте, чем я могу помочь?'
     this.say(msg)
   }
 
@@ -51,7 +51,18 @@ class SpeakManager extends React.Component {
   }
 
   replyHandler() {
-    this.say(this.state.clientMessage)
+    const cliMsg = this.state.clientMessage.toLowerCase()
+    console.log(cliMsg)
+    let replyMsg = '';
+    if (cliMsg.includes('хочу') && cliMsg.includes('сделать') && cliMsg.includes('заказ')) {
+      this.say('Что вас интересует?')
+    }
+    else if (cliMsg.includes('привет') || cliMsg.includes('здравствуйте') || cliMsg.includes('хай')) {
+      this.say('Приветствую!')
+    }
+    else {
+      this.say('Извините, возможно я вас неправильно поняла?')
+    }
   }
 
   render() {

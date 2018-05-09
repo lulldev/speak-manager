@@ -1,18 +1,22 @@
 import React from 'react'
-import SpeakManager from './SpeakManager'
-import ButtonSpeak from '../components/ButtonSpeak/ButtonSpeak';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux'
+
 import {
   Container,
   Col,
   Row
 } from 'reactstrap';
+
 import {
   setStateButtonSpeak,
   setVoiceAnswer,
   blockButtonSpeak
 } from '../actions/button-speak'
+
+import SpeakManager from './SpeakManager'
+import ButtonSpeak from '../components/ButtonSpeak/ButtonSpeak';
+import CommandsHelp from '../components/CommandsHelp/CommandsHelp';
 
 
 class App extends React.Component {
@@ -37,6 +41,7 @@ class App extends React.Component {
                 setStateButtonSpeak={ this.props.setStateButtonSpeak }
                 setVoiceAnswer={ this.props.setVoiceAnswer }
               />
+              <CommandsHelp/>
             </Col>
           </Row>
         </Container>
