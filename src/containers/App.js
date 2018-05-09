@@ -31,12 +31,14 @@ class App extends React.Component {
       <div>
         <Container>
           <Row>
-            <Col lg={12} className="text-center">
+            <Col lg={{ size: 8, offset: 2 }}
+                 className="text-center">
               <SpeakManager
                 blockButtonSpeak={ this.props.blockButtonSpeak }
               />
             </Col>
-            <Col lg={12} className="text-center">
+            <Col lg={{ size: 8, offset: 2 }}
+                 className="text-center">
               <ButtonSpeak
                 setStateButtonSpeak={ this.props.setStateButtonSpeak }
                 setVoiceAnswer={ this.props.setVoiceAnswer }

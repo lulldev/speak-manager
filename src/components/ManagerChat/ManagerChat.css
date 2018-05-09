@@ -1,0 +1,8 @@
+.manager-chat {
+    margin: 20px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    height: 100px;
+    text-align: left;
+    padding: 5px;
+}

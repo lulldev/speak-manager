@@ -2,6 +2,25 @@ import React from 'react'
 import {store} from '../store'
 import PropTypes from "prop-types";
 
+import OrderList from '../components/OrderList/OrderList'
+import ManagerChat from '../components/ManagerChat/ManagerChat'
+
+import products from '../data/products';
+
+const numbersLangEquals = [
+  'одну',
+  'одна',
+  'две',
+  'три',
+  'четыре',
+  'пять',
+  'шесть',
+  'семь',
+  'восемь',
+  'девять',
+  'десять'
+]
+
 class SpeakManager extends React.Component {
 
   static propsTypes = {
@@ -13,7 +32,11 @@ class SpeakManager extends React.Component {
 
     this.state = {
       clientMessage: '',
-      responseMessage: ''
+      responseMessage: '',
+      isOrderStart: false,
+      order: [],
+      nextMessage: null,
+      messages: []
     }
 
     store.subscribe(() => {
@@ -24,6 +47,7 @@ class SpeakManager extends React.Component {
 
     this.say = this.say.bind(this)
     this.replyHandler = this.replyHandler.bind(this)
+    this.addNewMessage = this.addNewMessage.bind(this)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -33,12 +57,22 @@ class SpeakManager extends React.Component {
   }
 
   componentDidMount() {
-    const msg = 'Здравствуйте, чем я могу помочь?'
-    this.say(msg)
+    this.say('Здравствуйте, чем я могу помочь?')
+  }
+
+  addNewMessage(who, msg) {
+    const messages = this.state.messages
+    messages.push({ who: who, text: msg})
+    this.setState({
+      messages: messages
+    })
   }
 
   say(what) {
-    this.setState({responseMessage: what})
+    this.setState({
+      responseMessage: what,
+    })
+    this.addNewMessage('Менеджер', what)
     const synth = window.speechSynthesis;
     window.utterances = [];
     const utterThis = new SpeechSynthesisUtterance(what)
@@ -50,25 +84,65 @@ class SpeakManager extends React.Component {
     }.bind(this)
   }
 
+  isMsgIsLikeProduct(msg) {
+    const splitMsg = msg.split(' ')
+    return splitMsg.length === 3
+      && products.some((product) => product.name === splitMsg[0])
+      && numbersLangEquals.indexOf(splitMsg[1]) > -1
+  }
+
   replyHandler() {
     const cliMsg = this.state.clientMessage.toLowerCase()
-    console.log(cliMsg)
-    let replyMsg = '';
+    this.addNewMessage('Вы', cliMsg)
     if (cliMsg.includes('хочу') && cliMsg.includes('сделать') && cliMsg.includes('заказ')) {
-      this.say('Что вас интересует?')
+      if (!this.state.isOrderStart) {
+        this.setState({isOrderStart: true})
+        this.say('Что вас интересует?')
+      } else {
+        this.say('Какой продукт вас интересует?')
+      }
     }
     else if (cliMsg.includes('привет') || cliMsg.includes('здравствуйте') || cliMsg.includes('хай')) {
       this.say('Приветствую!')
     }
+    else if (cliMsg.includes('пока') || cliMsg.includes('до свидания')) {
+      if (this.state.isOrderStart) {
+        this.say('Ваш заказ отменен, всего доброго!')
+      } else {
+        this.say('Спасибо за приятный диалог, всего доброго!')
+      }
+      this.setState({isOrderStart: false})
+    }
+    else if (cliMsg.includes('передумал') || cliMsg.includes('отбой')) {
+      if (this.state.isOrderStart) {
+        this.say('Ваш заказ отменен - если что-то нужно - скажите!')
+        this.setState({isOrderStart: false})
+      } else {
+        this.say('Если заказ был - то он отменен!')
+      }
+    }
+    else if (this.state.isOrderStart && this.isMsgIsLikeProduct(cliMsg)) {
+      this.say('Добавлено в заказ, что то ещё?')
+    }
+    else if (this.state.isOrderStart && (cliMsg.includes('всё') || (cliMsg.includes('завершить') && cliMsg.includes('заказ')))) {
+      this.say('Спасибо! Ваш заказ сформирован')
+      // todo display
+    }
     else {
-      this.say('Извините, возможно я вас неправильно поняла?')
+      if (this.state.isOrderStart) {
+        this.say('Извините, данного продукта нет в наличии!')
+      } else {
+        this.say('Извините, возможно я вас неправильно поняла?')
+      }
     }
   }
 
   render() {
+    console.log(this.state.messages)
     return (
       <div>
-        <h1 className="mt-5">{ this.state.responseMessage }</h1>
+        <ManagerChat messages={this.state.messages}/>
+        <OrderList/>
       </div>
     );
   }

@@ -3,7 +3,6 @@ import { Button } from 'reactstrap'
 import './ButtonSpeak.css'
 import PropTypes from 'prop-types'
 import { FormGroup } from 'reactstrap';
-import { store } from "../../store";
 
 export const speechRecognizer = new window.webkitSpeechRecognition()
 
@@ -18,21 +17,19 @@ class ButtonSpeak extends React.Component {
     this.state = {
       status: 'ready',
       hint: '',
-      isBlock: false,
       isRecognizing: false,
+      isOnSpeaker: true,
+      order: [],
+      lastTranscript: ''
     }
-
-    console.log(store.getState().buttonSpeak);
-    store.subscribe(() => {
-      this.setState({
-        isBlock: store.getState().buttonSpeak.isBlock
-      });
-    });
 
     this.onPressed = this.onPressed.bind(this)
     this.startConverting = this.startConverting.bind(this)
+    this.stopConverting = this.stopConverting.bind(this)
     this.onErrorConverting = this.onErrorConverting.bind(this)
     this.showBtnStatusText = this.showBtnStatusText.bind(this)
+
+    this.startConverting()
   }
 
   showBtnStatusText() {
@@ -48,18 +45,12 @@ class ButtonSpeak extends React.Component {
   }
 
   onPressed() {
-    if (this.state.status === 'ready') {
-      this.props.setStateButtonSpeak(true)
-      this.setState({
-        status: 'record',
-      })
-      this.startConverting()
+    if (this.state.isOnSpeaker) {
+      this.setState({isOnSpeaker: false})
+      this.stopConverting()
     } else {
-      this.props.setStateButtonSpeak(false)
-      speechRecognizer.stop()
-      this.setState({
-        status: 'ready',
-      })
+      this.setState({isOnSpeaker: true})
+      this.startConverting()
     }
   }
 
@@ -71,7 +62,7 @@ class ButtonSpeak extends React.Component {
         this.setState({isRecognizing: true})
       }.bind(this)
 
-      speechRecognizer.onend = function () {
+      speechRecognizer.onend = function (event) {
         this.setState({isRecognizing: false})
       }.bind(this)
 
@@ -91,11 +82,16 @@ class ButtonSpeak extends React.Component {
             interimTranscripts += transcript
           }
         }
-        this.props.setVoiceAnswer(finalTranscripts)
-        this.setState({ status: 'ready' })
+        this.props.setVoiceAnswer(
+          finalTranscripts.substr(
+            this.state.lastTranscript.length === 0 ? 0 : this.state.lastTranscript.length + 1,
+            finalTranscripts.length
+          )
+        )
+        this.setState({lastTranscript: finalTranscripts})
       }.bind(this)
 
-      speechRecognizer.continuous = false
+      speechRecognizer.continuous = true
       speechRecognizer.interimResults = true
       speechRecognizer.lang = 'ru-RU'
 
@@ -109,6 +105,10 @@ class ButtonSpeak extends React.Component {
         hint: 'Ваш браузер не поддерживает данную функцию!'
       })
     }
+  }
+
+  stopConverting() {
+    speechRecognizer.stop()
   }
 
   onErrorConverting(event) {
@@ -156,10 +156,9 @@ class ButtonSpeak extends React.Component {
           <Button
             onClick={ this.onPressed }
             className='button-speak'
-            color='success'
-            disabled={this.state.isBlock}
+            color={ this.state.isOnSpeaker ? 'danger' : 'success' }
           >
-            { this.showBtnStatusText() }
+            { this.state.isOnSpeaker ? 'Остановить диалог' : 'Начать диалог' }
           </Button>
           <div className='help-text'>{this.state.hint}</div>
         </FormGroup>
