@@ -18,7 +18,8 @@ const numbersLangEquals = [
   'семь',
   'восемь',
   'девять',
-  'десять'
+  'десять',
+  '1', '2', '3' , '4', '5', '6', '7', '8', '9', '10'
 ]
 
 class SpeakManager extends React.Component {
@@ -48,6 +49,7 @@ class SpeakManager extends React.Component {
     this.say = this.say.bind(this)
     this.replyHandler = this.replyHandler.bind(this)
     this.addNewMessage = this.addNewMessage.bind(this)
+    this.generateOrder = this.generateOrder.bind(this)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -88,7 +90,40 @@ class SpeakManager extends React.Component {
     const splitMsg = msg.split(' ')
     return splitMsg.length === 3
       && products.some((product) => product.name === splitMsg[0])
-      && numbersLangEquals.indexOf(splitMsg[1]) > -1
+  }
+
+  getMeasureByWord(word) {
+    if (word.includes('штук')) {
+      return 'шт.'
+    }
+    else if (word === 'л' || word.includes('литр')) {
+      return 'л.'
+    }
+    else if (word === 'кг' || word.includes('килограмм')) {
+      return 'кг.'
+    }
+    return null;
+  }
+
+  generateOrder(msg) {
+    const splitMsg = msg.split(' ')
+    const product = products.filter((product) => product.name === splitMsg[0])[0]
+    if (numbersLangEquals.indexOf(splitMsg[1]) === -1) {
+      this.say('Вы неверно указали количество продукта')
+    }
+    else if (!product) {
+      this.say('Названного продукта нет в наличии')
+    }
+    else if (this.getMeasureByWord(splitMsg[2]) !== product.measure) {
+      this.say('Неверный тип количества продуктов')
+    }
+    else {
+      this.say(`${splitMsg[0]} добавлен к заказу!`)
+      const order = this.state.order;
+      // todo: format number
+      order.push({count: splitMsg[1], ...product})
+      this.setState({order: order})
+    }
   }
 
   replyHandler() {
@@ -122,7 +157,7 @@ class SpeakManager extends React.Component {
       }
     }
     else if (this.state.isOrderStart && this.isMsgIsLikeProduct(cliMsg)) {
-      this.say('Добавлено в заказ, что то ещё?')
+      this.generateOrder(cliMsg)
     }
     else if (this.state.isOrderStart && (cliMsg.includes('всё') || (cliMsg.includes('завершить') && cliMsg.includes('заказ')))) {
       this.say('Спасибо! Ваш заказ сформирован')
@@ -130,7 +165,7 @@ class SpeakManager extends React.Component {
     }
     else {
       if (this.state.isOrderStart) {
-        this.say('Извините, данного продукта нет в наличии!')
+        this.say('Проверьте правильность продукта!')
       } else {
         this.say('Извините, возможно я вас неправильно поняла?')
       }
@@ -138,7 +173,6 @@ class SpeakManager extends React.Component {
   }
 
   render() {
-    console.log(this.state.messages)
     return (
       <div>
         <ManagerChat messages={this.state.messages}/>

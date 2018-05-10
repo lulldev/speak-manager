@@ -1,6 +1,6 @@
 const products = [
   { name: 'хлеб', measure: 'шт.' },
-  { name: 'молоко', measure: 'пач.' },
+  { name: 'молоко', measure: 'л.' },
   { name: 'яблоки', measure: 'кг.' },
 ]
 
