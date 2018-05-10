@@ -16,6 +16,8 @@ class OrderList extends React.Component {
     if (this.props.order.length === 0) {
       return null
     }
+    const order = this.props.order
+    const totalPrice = order.reduce((a, b) => +a + +b.price, 0);
     return (
       <div>
         <Table bordered={true} size="sm">
@@ -28,17 +30,23 @@ class OrderList extends React.Component {
           </thead>
           <tbody>
             {
-              this.props.order.map((order, i) => {
+              order.map((product, i) => {
                 return(
                   <tr key={i} className={this.props.isAccept ? 'table-success' : ''}>
-                    <td>{order.name}</td>
-                    <td>{`${order.count} ${order.measure}`}</td>
-                    <td>{`${order.price}`}</td>
+                    <td>{product.name}</td>
+                    <td>{`${product.count} ${product.measure}`}</td>
+                    <td>{`${product.price}`}</td>
                   </tr>
                 )
               })
             }
           </tbody>
+          <tfoot>
+            <tr className={this.props.isAccept ? 'table-success' : ''}>
+              <th colSpan="2" className="text-right">Итого к оплате:</th>
+              <th className="text-center">{ totalPrice }</th>
+            </tr>
+          </tfoot>
         </Table>
       </div>
     )
