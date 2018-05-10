@@ -1,8 +1,12 @@
+.hero {
+    padding: 15px;
+}
+
 .manager-chat {
-    margin: 15px 0 15px 0;
     overflow-y: scroll;
     border: 1px solid #ccc;
-    height: 100px;
+    height: 150px;
     text-align: left;
     padding: 5px;
+    font-size: 12px;
 }

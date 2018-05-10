@@ -18,7 +18,7 @@ class OrderList extends React.Component {
     }
     return (
       <div>
-        <Table bordered={true} className="table-sm">
+        <Table bordered={true} size="sm">
           <thead>
           <tr>
             <th>Товар</th>

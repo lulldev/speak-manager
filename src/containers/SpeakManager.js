@@ -1,11 +1,11 @@
 import React from 'react'
 import {store} from '../store'
 import PropTypes from "prop-types";
-
+import { Row, Col, Jumbotron, Card, CardBody } from 'reactstrap';
 import OrderList from '../components/OrderList/OrderList'
 import ManagerChat from '../components/ManagerChat/ManagerChat'
-
-import products from '../data/products';
+import ProductsConfigurator from '../components/ProductsConfigurator/ProductsConfigurator'
+import CommandsHelp from '../components/CommandsHelp/CommandsHelp'
 
 const langNumbers = [
   'одну',
@@ -42,7 +42,12 @@ class SpeakManager extends React.Component {
       order: [],
       nextMessage: null,
       messages: [],
-      isAccept: false
+      isAccept: false,
+      products: [
+        { name: 'хлеб', measure: 'шт.', price: 10 },
+        { name: 'молоко', measure: 'л.', price: 15 },
+        { name: 'яблоки', measure: 'кг.', price: 5 },
+      ],
     }
 
     store.subscribe(() => {
@@ -56,6 +61,8 @@ class SpeakManager extends React.Component {
     this.addNewMessage = this.addNewMessage.bind(this)
     this.generateOrder = this.generateOrder.bind(this)
     this.resetOrder = this.resetOrder.bind(this)
+    this.isMsgIsLikeProduct = this.isMsgIsLikeProduct.bind(this)
+    this.setProducts = this.setProducts.bind(this)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -95,7 +102,7 @@ class SpeakManager extends React.Component {
   isMsgIsLikeProduct(msg) {
     const splitMsg = msg.split(' ')
     return splitMsg.length === 3
-      && products.some((product) => product.name === splitMsg[0])
+      && this.state.products.some((product) => product.name === splitMsg[0])
   }
 
   getMeasureByWord(word) {
@@ -159,7 +166,7 @@ class SpeakManager extends React.Component {
 
   generateOrder(msg) {
     const splitMsg = msg.split(' ')
-    const product = products.filter((product) => product.name === splitMsg[0])[0]
+    const product = this.state.products.filter((product) => product.name === splitMsg[0])[0]
     if (numbersLangEquals.indexOf(splitMsg[1]) === -1) {
       this.say('Вы неверно указали количество продукта')
     }
@@ -181,7 +188,9 @@ class SpeakManager extends React.Component {
         }
       });
       if (!issetProduct) {
-        order.push({count: +this.formatCount(splitMsg[1]), ...product})
+        const count =  +this.formatCount(splitMsg[1])
+        product.price *= count
+        order.push({count: count, ...product})
       }
       this.setState({order: order})
     }
@@ -241,14 +250,48 @@ class SpeakManager extends React.Component {
     }
   }
 
+  setProducts(products) {
+    this.setState({products: products})
+  }
+
   render() {
     return (
       <div>
-        <ManagerChat messages={this.state.messages}/>
-        <OrderList
-          order={this.state.order}
-          isAccept={this.state.isAccept}
-        />
+        <br/>
+        <Row>
+          <Col lg={12}>
+            <Card>
+              <CardBody>
+                <ManagerChat messages={this.state.messages}/>
+                <br/>
+                <OrderList
+                  order={this.state.order}
+                  isAccept={this.state.isAccept}
+                />
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <br/>
+        <Row>
+          <Col lg={6}>
+            <Card>
+              <CardBody>
+                <ProductsConfigurator
+                  products={this.state.products}
+                  setProducts={this.setProducts}
+                />
+              </CardBody>
+            </Card>
+          </Col>
+          <Col lg={6}>
+            <Card>
+              <CardBody>
+                <CommandsHelp/>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
       </div>
     );
   }

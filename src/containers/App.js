@@ -16,7 +16,6 @@ import {
 
 import SpeakManager from './SpeakManager'
 import ButtonSpeak from '../components/ButtonSpeak/ButtonSpeak';
-import CommandsHelp from '../components/CommandsHelp/CommandsHelp';
 
 
 class App extends React.Component {
@@ -38,20 +37,15 @@ class App extends React.Component {
                 setStateButtonSpeak={ this.props.setStateButtonSpeak }
               />
             </Col>
+          </Row>
+          <br/>
+          <Row>
             <Col lg={{ size: 8, offset: 2 }}
                  className="text-center">
               <ButtonSpeak
                 setStateButtonSpeak={ this.props.setStateButtonSpeak }
                 setVoiceAnswer={ this.props.setVoiceAnswer }
               />
-              <Row>
-                <Col lg={6}>
-                  ....
-                </Col>
-                <Col lg={6}>
-                  <CommandsHelp/>
-                </Col>
-              </Row>
             </Col>
           </Row>
         </Container>
