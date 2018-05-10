@@ -1,28 +1,47 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Table } from 'reactstrap'
 
-const OrderList = (props) => {
- if (!props.order) {
-   return null
- }
- return (
-   <div>
-     <Table bordered={true}>
-       <thead>
-        <tr>
-          <th>Товар</th>
-          <th>Количество</th>
-        </tr>
-       </thead>
-       <tbody>
-         <tr>
-           <td>Товар</td>
-           <td>Количество</td>
-         </tr>
-       </tbody>
-     </Table>
-   </div>
- )
+class OrderList extends React.Component {
+  static propsTypes = {
+    order: PropTypes.array.isRequired,
+    isAccept: PropTypes.bool.isRequired,
+  }
+
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    if (this.props.order.length === 0) {
+      return null
+    }
+    return (
+      <div>
+        <Table bordered={true} className="table-sm">
+          <thead>
+          <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+          </tr>
+          </thead>
+          <tbody>
+            {
+              this.props.order.map((order, i) => {
+                return(
+                  <tr key={i} className={this.props.isAccept ? 'table-success' : ''}>
+                    <td>{order.name}</td>
+                    <td>{`${order.count} ${order.measure}`}</td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        </Table>
+      </div>
+    )
+  }
 }
+
 
 export default OrderList

@@ -7,9 +7,10 @@ import ManagerChat from '../components/ManagerChat/ManagerChat'
 
 import products from '../data/products';
 
-const numbersLangEquals = [
+const langNumbers = [
   'одну',
   'одна',
+  'один',
   'две',
   'три',
   'четыре',
@@ -19,7 +20,9 @@ const numbersLangEquals = [
   'восемь',
   'девять',
   'десять',
-  '1', '2', '3' , '4', '5', '6', '7', '8', '9', '10'
+]
+const numbersLangEquals = [
+  '1', '2', '3' , '4', '5', '6', '7', '8', '9', '10', ...langNumbers
 ]
 
 class SpeakManager extends React.Component {
@@ -37,7 +40,8 @@ class SpeakManager extends React.Component {
       isOrderStart: false,
       order: [],
       nextMessage: null,
-      messages: []
+      messages: [],
+      isAccept: false
     }
 
     store.subscribe(() => {
@@ -50,6 +54,7 @@ class SpeakManager extends React.Component {
     this.replyHandler = this.replyHandler.bind(this)
     this.addNewMessage = this.addNewMessage.bind(this)
     this.generateOrder = this.generateOrder.bind(this)
+    this.resetOrder = this.resetOrder.bind(this)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -105,6 +110,52 @@ class SpeakManager extends React.Component {
     return null;
   }
 
+  formatCount(count) {
+    let resultCount = count
+    switch(count) {
+      case 'одну':
+        resultCount = 1;
+        break;
+      case 'одна':
+        resultCount = 1;
+        break;
+      case 'один':
+        resultCount = 1;
+        break;
+      case 'два':
+        resultCount = 2;
+        break;
+      case 'две':
+        resultCount = 2;
+        break;
+      case 'три':
+        resultCount = 3;
+        break;
+      case 'четыре':
+        resultCount = 4;
+        break;
+      case 'пять':
+        resultCount = 5;
+        break;
+      case 'шесть':
+        resultCount = 6;
+        break;
+      case 'семь':
+        resultCount = 7;
+        break;
+      case 'восемь':
+        resultCount = 8;
+        break;
+      case 'девять':
+        resultCount = 9;
+        break;
+      case 'десять':
+        resultCount = 10;
+        break;
+    }
+    return resultCount;
+  }
+
   generateOrder(msg) {
     const splitMsg = msg.split(' ')
     const product = products.filter((product) => product.name === splitMsg[0])[0]
@@ -121,15 +172,24 @@ class SpeakManager extends React.Component {
       this.say(`${splitMsg[0]} добавлен к заказу!`)
       const order = this.state.order;
       // todo: format number
-      order.push({count: splitMsg[1], ...product})
+      order.push({count: this.formatCount(splitMsg[1]), ...product})
       this.setState({order: order})
     }
+  }
+
+  resetOrder() {
+    this.setState({
+      isOrderStart: false,
+      order: [],
+      isAccept: false
+    })
   }
 
   replyHandler() {
     const cliMsg = this.state.clientMessage.toLowerCase()
     this.addNewMessage('Вы', cliMsg)
     if (cliMsg.includes('хочу') && cliMsg.includes('сделать') && cliMsg.includes('заказ')) {
+      this.resetOrder()
       if (!this.state.isOrderStart) {
         this.setState({isOrderStart: true})
         this.say('Что вас интересует?')
@@ -141,17 +201,13 @@ class SpeakManager extends React.Component {
       this.say('Приветствую!')
     }
     else if (cliMsg.includes('пока') || cliMsg.includes('до свидания')) {
-      if (this.state.isOrderStart) {
-        this.say('Ваш заказ отменен, всего доброго!')
-      } else {
-        this.say('Спасибо за приятный диалог, всего доброго!')
-      }
-      this.setState({isOrderStart: false})
+      this.resetOrder()
+      this.say('Спасибо за приятный диалог, всего доброго!')
     }
     else if (cliMsg.includes('передумал') || cliMsg.includes('отбой')) {
       if (this.state.isOrderStart) {
         this.say('Ваш заказ отменен - если что-то нужно - скажите!')
-        this.setState({isOrderStart: false})
+        this.resetOrder()
       } else {
         this.say('Если заказ был - то он отменен!')
       }
@@ -161,7 +217,7 @@ class SpeakManager extends React.Component {
     }
     else if (this.state.isOrderStart && (cliMsg.includes('всё') || (cliMsg.includes('завершить') && cliMsg.includes('заказ')))) {
       this.say('Спасибо! Ваш заказ сформирован')
-      // todo display
+      this.setState({isAccept: true})
     }
     else {
       if (this.state.isOrderStart) {
@@ -176,7 +232,10 @@ class SpeakManager extends React.Component {
     return (
       <div>
         <ManagerChat messages={this.state.messages}/>
-        <OrderList/>
+        <OrderList
+          order={this.state.order}
+          isAccept={this.state.isAccept}
+        />
       </div>
     );
   }
