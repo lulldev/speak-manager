@@ -35,6 +35,7 @@ class App extends React.Component {
                  className="text-center">
               <SpeakManager
                 blockButtonSpeak={ this.props.blockButtonSpeak }
+                setStateButtonSpeak={ this.props.setStateButtonSpeak }
               />
             </Col>
             <Col lg={{ size: 8, offset: 2 }}

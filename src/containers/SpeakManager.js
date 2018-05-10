@@ -28,7 +28,8 @@ const numbersLangEquals = [
 class SpeakManager extends React.Component {
 
   static propsTypes = {
-    blockButtonSpeak: PropTypes.func.isRequired
+    blockButtonSpeak: PropTypes.func.isRequired,
+    setStateButtonSpeak: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -169,7 +170,7 @@ class SpeakManager extends React.Component {
       this.say('Неверный тип количества продуктов')
     }
     else {
-      this.say(`${splitMsg[0]} добавлен к заказу!`)
+      this.say(`Продукт добавлен к заказу!`)
       const order = this.state.order;
       // todo: format number
       order.push({count: this.formatCount(splitMsg[1]), ...product})
@@ -190,12 +191,8 @@ class SpeakManager extends React.Component {
     this.addNewMessage('Вы', cliMsg)
     if (cliMsg.includes('хочу') && cliMsg.includes('сделать') && cliMsg.includes('заказ')) {
       this.resetOrder()
-      if (!this.state.isOrderStart) {
-        this.setState({isOrderStart: true})
-        this.say('Что вас интересует?')
-      } else {
-        this.say('Какой продукт вас интересует?')
-      }
+      this.setState({isOrderStart: true})
+      this.say('Что вас интересует?')
     }
     else if (cliMsg.includes('привет') || cliMsg.includes('здравствуйте') || cliMsg.includes('хай')) {
       this.say('Приветствую!')
@@ -203,28 +200,34 @@ class SpeakManager extends React.Component {
     else if (cliMsg.includes('пока') || cliMsg.includes('до свидания')) {
       this.resetOrder()
       this.say('Спасибо за приятный диалог, всего доброго!')
+      this.props.setStateButtonSpeak(false)
     }
     else if (cliMsg.includes('передумал') || cliMsg.includes('отбой')) {
       if (this.state.isOrderStart) {
         this.say('Ваш заказ отменен - если что-то нужно - скажите!')
-        this.resetOrder()
       } else {
         this.say('Если заказ был - то он отменен!')
       }
+      this.resetOrder()
     }
-    else if (this.state.isOrderStart && this.isMsgIsLikeProduct(cliMsg)) {
-      this.generateOrder(cliMsg)
+    else if ((cliMsg.includes('всё') || (cliMsg.includes('завершить') && cliMsg.includes('заказ')))) {
+      if (this.state.isOrderStart && this.state.order.length > 0) {
+        this.say('Спасибо! Ваш заказ сформирован')
+        this.setState({isAccept: true, isOrderStart: false})
+      }
+      else {
+        this.say('В вашем заказе нет продуктов. Начните новый заказ!')
+      }
     }
-    else if (this.state.isOrderStart && (cliMsg.includes('всё') || (cliMsg.includes('завершить') && cliMsg.includes('заказ')))) {
-      this.say('Спасибо! Ваш заказ сформирован')
-      this.setState({isAccept: true})
+    else if (this.state.isOrderStart) {
+      if (this.isMsgIsLikeProduct(cliMsg)) {
+        this.generateOrder(cliMsg)
+      } else {
+        this.say('Проверьте правильность продукта!')
+      }
     }
     else {
-      if (this.state.isOrderStart) {
-        this.say('Проверьте правильность продукта!')
-      } else {
-        this.say('Извините, возможно я вас неправильно поняла?')
-      }
+      this.say('Неверный запрос, возможно вы хотите начать новый заказ?')
     }
   }
 

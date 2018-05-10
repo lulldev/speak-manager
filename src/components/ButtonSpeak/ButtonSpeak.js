@@ -59,7 +59,7 @@ class ButtonSpeak extends React.Component {
       let finalTranscripts = ''
 
       speechRecognizer.onstart = function () {
-        this.setState({isRecognizing: true})
+        this.setState({isRecognizing: true, hint: ''})
       }.bind(this)
 
       speechRecognizer.onend = function (event) {
@@ -68,7 +68,7 @@ class ButtonSpeak extends React.Component {
 
       speechRecognizer.onerror = function (event) {
         this.setState({isRecognizing: false})
-        this.onErrorConverting()
+        this.onErrorConverting(event)
       }.bind(this)
 
       speechRecognizer.onresult = function(event) {
@@ -119,32 +119,32 @@ class ButtonSpeak extends React.Component {
 
     switch (event.error) {
       case 'not-allowed' || 'service-not-allowed':
-        this.setState({ hint: 'Разрешите доступ к микрофону!' })
+        this.setState({ hint: 'Разрешите доступ к микрофону!', isOnSpeaker: false })
         break
 
       case 'network':
-        this.setState({ hint: 'Ошибка! Проверьте интернет-соединение!' })
+        this.setState({ hint: 'Ошибка! Проверьте интернет-соединение!', isOnSpeaker: false })
         break
 
       case 'aborted':
-        this.setState({ hint: 'Речевой ввод был прерван!' })
+        this.setState({ hint: 'Речевой ввод был прерван!', isOnSpeaker: false })
         break
       
       case 'no-speech':
-        this.setState({ hint: 'Никакой речи не было обнаружено!' })
+        this.setState({ hint: 'Никакой речи не было обнаружено!', isOnSpeaker: false })
         break
 
       case 'bad-grammar':
         this.setState({ hint: 'Произошла ошибка в грамматике' +
-                              'распознавания речи!' })
+                              'распознавания речи!', isOnSpeaker: false })
         break
 
       case 'language-not-supported':
-        this.setState({ hint: 'Данный язык не поддерживался!' })
+        this.setState({ hint: 'Данный язык не поддерживался!', isOnSpeaker: false })
         break
 
       default:
-        this.setState({ hint: `Error! - ${event.error}` })
+        this.setState({ hint: `Error! - ${event.error}`, isOnSpeaker: false })
         break
     }
   }
@@ -160,7 +160,9 @@ class ButtonSpeak extends React.Component {
           >
             { this.state.isOnSpeaker ? 'Остановить диалог' : 'Начать диалог' }
           </Button>
-          <div className='help-text'>{this.state.hint}</div>
+          <div>
+            <small className='help-text text-danger'>{this.state.hint}</small>
+          </div>
         </FormGroup>
       </div>
     )
