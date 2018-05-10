@@ -171,9 +171,18 @@ class SpeakManager extends React.Component {
     }
     else {
       this.say(`Продукт добавлен к заказу!`)
-      const order = this.state.order;
-      // todo: format number
-      order.push({count: this.formatCount(splitMsg[1]), ...product})
+      const order = this.state.order
+      let issetProduct = false
+      order.forEach((item, i, arr) => {
+        if (item.name === splitMsg[0]) {
+          item.count += +this.formatCount(splitMsg[1])
+          item.price = item.count * product.price
+          issetProduct = true
+        }
+      });
+      if (!issetProduct) {
+        order.push({count: +this.formatCount(splitMsg[1]), ...product})
+      }
       this.setState({order: order})
     }
   }
@@ -217,6 +226,7 @@ class SpeakManager extends React.Component {
       }
       else {
         this.say('В вашем заказе нет продуктов. Начните новый заказ!')
+        this.resetOrder()
       }
     }
     else if (this.state.isOrderStart) {

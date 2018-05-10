@@ -23,6 +23,7 @@ class OrderList extends React.Component {
           <tr>
             <th>Товар</th>
             <th>Количество</th>
+            <th>Цена (руб.)</th>
           </tr>
           </thead>
           <tbody>
@@ -32,6 +33,7 @@ class OrderList extends React.Component {
                   <tr key={i} className={this.props.isAccept ? 'table-success' : ''}>
                     <td>{order.name}</td>
                     <td>{`${order.count} ${order.measure}`}</td>
+                    <td>{`${order.price}`}</td>
                   </tr>
                 )
               })

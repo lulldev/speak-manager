@@ -158,7 +158,7 @@ class ButtonSpeak extends React.Component {
             className='button-speak'
             color={ this.state.isOnSpeaker ? 'danger' : 'success' }
           >
-            { this.state.isOnSpeaker ? 'Остановить диалог' : 'Начать диалог' }
+            { this.state.isOnSpeaker ? 'Остановить запись голоса' : 'Начать голосовой сеанс' }
           </Button>
           <div>
             <small className='help-text text-danger'>{this.state.hint}</small>

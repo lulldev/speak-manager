@@ -44,7 +44,14 @@ class App extends React.Component {
                 setStateButtonSpeak={ this.props.setStateButtonSpeak }
                 setVoiceAnswer={ this.props.setVoiceAnswer }
               />
-              <CommandsHelp/>
+              <Row>
+                <Col lg={6}>
+                  ....
+                </Col>
+                <Col lg={6}>
+                  <CommandsHelp/>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Container>

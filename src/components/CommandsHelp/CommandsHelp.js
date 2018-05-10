@@ -3,7 +3,7 @@ import { Table } from 'reactstrap'
 
 const CommandsHelp = () => {
  return (
-   <div className="help-text">
+   <div className="help-text text-left">
     <strong>Приветствие:</strong> <i>привет|здравствуйте|хай</i><br/>
     <strong>Прощание:</strong> <i>пока|до свидания</i><br/>
     <strong>Создать заказ:</strong> <i>(хочу+сделать+заказ)</i><br/>
