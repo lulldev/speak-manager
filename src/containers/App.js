@@ -30,7 +30,7 @@ class App extends React.Component {
       <div>
         <Container>
           <Row>
-            <Col lg={{ size: 8, offset: 2 }}
+            <Col lg={{ size: 9, offset: 1 }}
                  className="text-center">
               <SpeakManager
                 blockButtonSpeak={ this.props.blockButtonSpeak }
@@ -40,7 +40,7 @@ class App extends React.Component {
           </Row>
           <br/>
           <Row>
-            <Col lg={{ size: 8, offset: 2 }}
+            <Col lg={{ size: 9, offset: 1 }}
                  className="text-center">
               <ButtonSpeak
                 setStateButtonSpeak={ this.props.setStateButtonSpeak }

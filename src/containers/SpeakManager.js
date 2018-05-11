@@ -262,14 +262,22 @@ class SpeakManager extends React.Component {
           <Col lg={12}>
             <Card>
               <CardBody>
-                <ManagerChat messages={this.state.messages}/>
-                <br/>
-                <OrderList
-                  order={this.state.order}
-                  isAccept={this.state.isAccept}
-                />
+                <Row>
+                  <Col lg={3}>
+                    <img src="logo.png" className="img-fluid"/>
+                  </Col>
+                  <Col lg={9}>
+                    <ManagerChat messages={this.state.messages}/>
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
+          </Col>
+          <Col lg={12}>
+            <OrderList
+              order={this.state.order}
+              isAccept={this.state.isAccept}
+            />
           </Col>
         </Row>
         <br/>
