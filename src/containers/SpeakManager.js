@@ -183,13 +183,13 @@ class SpeakManager extends React.Component {
       order.forEach((item, i, arr) => {
         if (item.name === splitMsg[0]) {
           item.count += +this.formatCount(splitMsg[1])
-          item.price = item.count * product.price
+          item.totalPrice = item.count * product.price
           issetProduct = true
         }
       });
       if (!issetProduct) {
         const count =  +this.formatCount(splitMsg[1])
-        product.price *= count
+        product.totalPrice = product.price * count
         order.push({count: count, ...product})
       }
       this.setState({order: order})

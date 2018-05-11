@@ -17,7 +17,7 @@ class OrderList extends React.Component {
       return null
     }
     const order = this.props.order
-    const totalPrice = order.reduce((a, b) => +a + +b.price, 0);
+    const totalPrice = order.reduce((a, b) => +a + +b.totalPrice, 0);
     return (
       <div>
         <Table bordered={true} size="sm">
@@ -26,6 +26,7 @@ class OrderList extends React.Component {
             <th>Товар</th>
             <th>Количество</th>
             <th>Цена (руб.)</th>
+            <th>Сумма</th>
           </tr>
           </thead>
           <tbody>
@@ -36,6 +37,7 @@ class OrderList extends React.Component {
                     <td>{product.name}</td>
                     <td>{`${product.count} ${product.measure}`}</td>
                     <td>{`${product.price}`}</td>
+                    <td>{`${product.totalPrice}`}</td>
                   </tr>
                 )
               })
@@ -43,7 +45,7 @@ class OrderList extends React.Component {
           </tbody>
           <tfoot>
             <tr className={this.props.isAccept ? 'table-success' : ''}>
-              <th colSpan="2" className="text-right">Итого к оплате:</th>
+              <th colSpan="3" className="text-right">Итого к оплате:</th>
               <th className="text-center">{ totalPrice }</th>
             </tr>
           </tfoot>
